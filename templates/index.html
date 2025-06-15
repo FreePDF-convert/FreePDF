@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>FreePDF – Convert your files to PDF</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="container">
+    <h1>FreePDF</h1>
+    <p>Convert your .txt files to PDF – simple, fast and free.</p>
+
+    <form method="POST" enctype="multipart/form-data">
+      <input type="file" name="file" accept=".txt" required>
+      <button type="submit">Convert to PDF</button>
+    </form>
+
+    <div class="donate">
+      <p>💖 Like the service? <a href="https://www.buymeacoffee.com/yourname" target="_blank">Buy me a coffee</a></p>
+    </div>
+  </div>
+</body>
+</html>
