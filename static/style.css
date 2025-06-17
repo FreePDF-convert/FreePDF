@@ -15,7 +15,7 @@ body {
 
 .header img {
     max-width: 60px;
-    height: auto;
+    padding: 20px; 
     margin-bottom: 10px;
 }
 
