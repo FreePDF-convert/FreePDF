@@ -16,7 +16,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST']) 
 def index():
     if request.method == 'POST':
         uploaded_file = request.files['file']

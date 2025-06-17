@@ -4,11 +4,18 @@
   <meta charset="UTF-8">
   <title>FreePDF - Convert any file to PDF</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script src="https://unpkg.com/split-type"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 </head>
 <body>
   <div class="container">
-    <img src="{{ url_for('static', filename='logo.png') }}" alt="FreePDF Logo" class="logo">
-    <h1>Convert your file to PDF</h1>
+    <div class="logo-container">
+      <img src="{{ url_for('static', filename='logo.png') }}" alt="FreePDF Logo" class="logo">
+    </div>
+
+    <h1 class="animated-text">Convert your file to PDF</h1>
+    <h2 class="rotating-text" id="rotatingText">PDF, Word, Imagen... tú eliges</h2>
+
     <form action="/" method="post" enctype="multipart/form-data">
       <label class="custom-file-upload">
         Seleccionar archivo
@@ -16,15 +23,42 @@
       </label>
       <button type="submit">Convert to PDF</button>
     </form>
+
     <h1>Convert PDF to DOCX</h1>
     <form action="/pdf-to-docx" method="post" enctype="multipart/form-data">
       <label class="custom-file-upload">
         Seleccionar PDF
         <input type="file" name="file" accept=".pdf" required>
       </label>
-  <button type="submit">Convert to DOCX</button>
+      <button type="submit">Convert to DOCX</button>
     </form>
-
   </div>
+
+  <!-- Animaciones -->
+  <script>
+    // True Focus
+    const text = new SplitType('.animated-text', { types: 'words' });
+    gsap.from('.word', {
+      opacity: 0,
+      y: 50,
+      stagger: 0.1,
+      duration: 1,
+      ease: "back.out(1.7)"
+    });
+
+    // Rotating Text
+    const rotatingText = document.getElementById('rotatingText');
+    const frases = [
+      "PDF, Word, Imagen... tú eliges",
+      "Rápido, seguro y gratis",
+      "Convierte en segundos",
+      "Sin instalar nada"
+    ];
+    let index = 0;
+    setInterval(() => {
+      index = (index + 1) % frases.length;
+      rotatingText.textContent = frases[index];
+    }, 3000);
+  </script>
 </body>
 </html>
