@@ -1,20 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>FreePDF – Convert your files to PDF</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta charset="UTF-8">
+    <title>FreePDF - File to PDF Converter</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-  <div class="container">
-    <h1>FreePDF</h1>
-    <p>Convert your .txt files to PDF – simple, fast and free.</p>
-
-    <form method="POST" enctype="multipart/form-data">
-      <input type="file" name="file" accept=".txt" required>
-      <button type="submit">Convert to PDF</button>
-    </form>
-
-  </div>
+    <div class="header">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="FreePDF Logo">
+        <h1>FreePDF</h1>
+        <p>Convert your files to PDF easily and for free</p>
+    </div>
+    <div class="container">
+        <form method="POST" enctype="multipart/form-data">
+            <input type="file" name="file" required>
+            <br>
+            <button type="submit">Convert to PDF</button>
+        </form>
+    </div>
 </body>
 </html>
