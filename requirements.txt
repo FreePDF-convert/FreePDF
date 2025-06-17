@@ -1,2 +1,6 @@
-flask
+Flask
 fpdf
+Pillow
+python-docx
+docx2txt
+PyPDF2
