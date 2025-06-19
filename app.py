@@ -49,6 +49,7 @@ def index():
                 image.save(pdf_path)
 
             elif ext == 'docx':
+                filename = os.path.basename(file_path)
                 output_doc = os.path.join(OUTPUT_FOLDER, filename.replace('.docx', '.pdf'))
                 command = f'libreoffice --headless --convert-to pdf "{file_path}" --outdir"{OUTPUT_FOLDER}"'
                 conversion_result = os.system(command)
