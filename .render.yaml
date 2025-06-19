@@ -2,6 +2,6 @@ services:
   - type: web
     name: freepdf
     env: python
-    buildCommand: ""
+    buildCommand: "./build.sh"
     startCommand: "python app.py"
     plan: free

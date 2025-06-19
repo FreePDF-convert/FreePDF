@@ -49,13 +49,12 @@ def index():
                 image.save(pdf_path)
 
             elif ext == 'docx':
-                text = docx2txt.process(file_path)
-                pdf = FPDF()
-                pdf.add_page()
-                pdf.set_font("Arial", size=12)
-                for line in text.split('\n'):
-                    pdf.multi_cell(0, 10, txt=line)
-                pdf.output(pdf_path)
+                output_doc = os.path.join(OUTPUT_FOLDER, filename.replace('.docx', '.pdf'))
+                command = f'libreoffice --headless --convert-to pdf "{file_path}" --outdir"{OUTPUT_FOLDER}"'
+                conversion_result = os.system(command)
+                if conversion_result !=0 or not os.path.exists(output_doc):
+                    return "Error en la conversión con LibreOffice", 500                
+                pdf_path = output_doc
 
             elif ext == 'pdf':
                 reader = PdfReader(file_path)
