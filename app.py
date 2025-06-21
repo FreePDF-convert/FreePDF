@@ -2,11 +2,11 @@ from flask import Flask, render_template, request, send_file, redirect
 import os
 from werkzeug.utils import secure_filename
 import uuid
-from PyPDF2 import PdfReader, PdfWriter
+from PyPDF2 import PdfMerger
 from PIL import Image
 import docx2txt
 from pdf2docx import Converter
-from fpdf import FPDF
+from fpdf import FPDF  # Usamos fpdf2, totalmente compatible
 
 app = Flask(__name__)
 UPLOAD_FOLDER = 'uploads'
@@ -24,12 +24,12 @@ def index():
         if uploaded_file.filename == '':
             return "No file selected", 400
 
-        original_filename = secure_filename(uploaded_file.filename)
-        ext = original_filename.split('.')[-1].lower()
-        file_path = os.path.join(app.config['UPLOAD_FOLDER'], original_filename)
+        filename = secure_filename(uploaded_file.filename)
+        ext = filename.split('.')[-1].lower()
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         uploaded_file.save(file_path)
 
-        pdf_filename = original_filename.rsplit('.', 1)[0] + ".pdf"
+        pdf_filename = f"{os.path.splitext(filename)[0]}.pdf"
         pdf_path = os.path.join(OUTPUT_FOLDER, pdf_filename)
 
         try:
@@ -49,27 +49,22 @@ def index():
                 image.save(pdf_path)
 
             elif ext == 'docx':
-                filename = os.path.basename(file_path)
-                output_doc = os.path.join(OUTPUT_FOLDER, filename.replace('.docx', '.pdf'))
-                command = f'libreoffice --headless --convert-to pdf "{file_path}" --outdir"{OUTPUT_FOLDER}"'
-                conversion_result = os.system(command)
-                if conversion_result !=0 or not os.path.exists(output_doc):
-                    return "Error en la conversión con LibreOffice", 500                
-                pdf_path = output_doc
+                text = docx2txt.process(file_path)
+                pdf = FPDF()
+                pdf.set_auto_page_break(auto=True, margin=15)
+                pdf.add_page()
+                pdf.set_font("Arial", size=12)
+                for line in text.split('\n'):
+                    pdf.multi_cell(0, 10, txt=line)
+                pdf.output(pdf_path)
 
             elif ext == 'pdf':
-                reader = PdfReader(file_path)
-                writer = PdfWriter()
-                for page in reader.pages:
-                    writer.add_page(page)
-                with open(pdf_path, 'wb') as f:
-                    writer.write(f)
-                return send_file(pdf_path, as_attachment=True, download_name=original_filename)
+                return send_file(file_path, as_attachment=True)
 
             else:
                 return "Unsupported file type", 400
 
-            return send_file(pdf_path, as_attachment=True, download_name=pdf_filename)
+            return send_file(pdf_path, as_attachment=True)
 
         except Exception as e:
             return f"Error al convertir el archivo: {str(e)}", 500
@@ -80,22 +75,21 @@ def index():
 def pdf_to_docx():
     file = request.files['file']
     if file and file.filename.endswith('.pdf'):
-        original_filename = secure_filename(file.filename)
-        input_path = os.path.join(app.config['UPLOAD_FOLDER'], original_filename)
+        filename = secure_filename(file.filename)
+        input_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(input_path)
 
-        output_filename = original_filename.replace('.pdf', '.docx')
+        output_filename = filename.replace('.pdf', '.docx')
         output_path = os.path.join(app.config['UPLOAD_FOLDER'], output_filename)
 
         cv = Converter(input_path)
         cv.convert(output_path, start=0, end=None)
         cv.close()
 
-        return send_file(output_path, as_attachment=True, download_name=output_filename)
+        return send_file(output_path, as_attachment=True)
 
     return redirect('/')
 
 if __name__ == '__main__':
-    import os
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
